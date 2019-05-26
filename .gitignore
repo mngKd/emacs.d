@@ -7,3 +7,5 @@ elpa/
 history
 ido.last
 bookmarks
+transient
+tramp

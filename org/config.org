@@ -1,6 +1,6 @@
 #+STARTUP: showeverything
 * Intro
-  This is my master .org config fil
+  This is my master .org config file
 
 * Configuration
 ** Package management
@@ -98,9 +98,9 @@
 
    Enable ido mode and use flex matching
    #+begin_src emacs-lisp
-     (setq ido-enable-flex-matching t)
+     (ido-mode 1)
      (setq ido-everywhere t)
-     (ido-mode t)
+     (setq ido-enable-flex-matching t)
    #+end_src
 
    Use winner-mode to retrieve past window configurations
@@ -108,9 +108,73 @@
      (setq winner-mode t)
    #+end_src
 
-   Use 'M-o' to change between windows
+   Use ace-window for really fast window selection
    #+begin_src emacs-lisp
-     (global-set-key (kbd "M-o") 'other-window)
+     (use-package ace-window
+       :config
+       (global-set-key (kbd "M-o") 'ace-window)
+       (setq aw-keys '(?n ?r ?t ?d ?u ?i ?a ?e))
+       (setq aw-ignore-current t))
+   #+end_src
+
+   Use windmove to change windows by S-<arrow> (see [[https://orgmode.org/manual/Conflicts.html][link]] for more information)
+   #+begin_src emacs-lisp
+     (windmove-default-keybindings)
+     ;; Make windmove work in Org mode:
+     (add-hook 'org-shiftup-final-hook 'windmove-up)
+     (add-hook 'org-shiftleft-final-hook 'windmove-left)
+     (add-hook 'org-shiftdown-final-hook 'windmove-down)
+     (add-hook 'org-shiftright-final-hook 'windmove-right)
+   #+end_src
+
+   Use actual visual lines, not logical lines
+   #+begin_src emacs-lisp
+     (setq global-visual-line-mode t)
+   #+end_src
+
+   Use 'M-i' for 'M-x imenu'
+   #+begin_src emacs-lisp
+     (global-set-key (kbd "M-i") 'imenu)
+   #+end_src
+
+    of 'C-w' to kill whole line, if no region is active
+   #+begin_src emacs-lisp
+     (use-package whole-line-or-region
+       :config
+       (whole-line-or-region-global-mode 1))
+   #+end_src
+   
+   Use Hippie Expand for text completion ('M-/')
+   #+begin_src emacs-lisp
+     (global-set-key [remap dabbrev-expand] 'hippie-expand)
+   #+end_src
+
+   Do not use tabs, I want 4 spaces
+   #+begin_src emacs-lisp
+     (setq indent-tabs-mode nil)
+     (setq tab-width 4)
+   #+end_src
+
+   If a buffer changed on disk, it should be automatically refreshed
+   #+begin_src emacs-lisp
+     (global-auto-revert-mode 1)
+   #+end_src
+
+   Function to edit current buffer as root user and map it to <f12>
+   #+begin_src emacs-lisp
+     (defun mng-sudo ()
+       "Use TRAMP to edit current buffer as root user"
+       (interactive)
+       (when buffer-file-name
+	 (find-alternate-file
+	  (concat "/sudo:root@localhost:"
+		  buffer-file-name))))
+     (global-set-key (kbd "<f12>") 'mng-sudo)
+   #+end_src
+
+   Enable dired-x by default
+   #+begin_src emacs-lisp
+     (require 'dired-x)
    #+end_src
 ** org-mode
    Install latest, stable org-mode
@@ -138,5 +202,4 @@
      (use-package which-key
        :config
        (which-key-mode))
-   #+end_src
-   
+   #+end_src   
