@@ -22,6 +22,7 @@
 
       (eval-when-compile
 	(require 'use-package))
+      (require 'use-package-ensure)
       (setq use-package-always-ensure t)
     #+end_src
 ** General settings
@@ -188,13 +189,44 @@
      (require 'org-tempo)
      (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
    #+end_src
+*** LaTeX support
+    Install CDLaTeX. Also install auctex, CDLaTeX requires texmathp.el
+    #+begin_src emacs-lisp
+      (use-package auctex
+	:defer t)
+      (use-package cdlatex)
+    #+end_src
+    Setup org-mode hook to load cdlatex
+    #+begin_src emacs-lisp
+      (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+    #+end_src
 ** Programming
-*** Magit
     Install magit, the best git integration ever
     #+begin_src emacs-lisp
       (use-package magit
 	:config
 	(global-set-key (kbd "C-x g") 'magit-status))
+    #+end_src
+    Install a good debugger
+    #+begin_src emacs-lisp
+      (use-package realgud)
+    #+end_src
+    Font-locking for CMakelists
+    #+begin_src emacs-lisp
+      (use-package cmake-mode)
+    #+end_src
+    Setup elpy
+    #+begin_src emacs-lisp
+      (use-package elpy
+	:config
+	(elpy-enable))
+    #+end_src
+    Use EIN to interface with jupyter notebooks
+    #+begin_src emacs-lisp
+      (use-package ein
+	:config
+	(require 'ein-notebook)
+	(require 'ein-subpackages))
     #+end_src
 ** Packages
    Which-key for easy exploration
