@@ -107,6 +107,11 @@
    #+begin_src emacs-lisp
      (setq winner-mode t)
    #+end_src
+
+   Use 'M-o' to change between windows
+   #+begin_src emacs-lisp
+     (global-set-key (kbd "M-o") 'other-window)
+   #+end_src
 ** org-mode
    Install latest, stable org-mode
    #+begin_src emacs-lisp
@@ -117,9 +122,16 @@
    Add an easy template for emacs-lisp babel block (see [[https://emacs.stackexchange.com/questions/46795/is-it-possible-to-add-templates-other-than-begin-end-to-org-structure-temp][link]])
    #+begin_src emacs-lisp
      (require 'org-tempo)
-     (add-to-list 'org-structure-template-alist '("el" . "emacs-lisp"))
+     (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
    #+end_src
-
+** Programming
+*** Magit
+    Install magit, the best git integration ever
+    #+begin_src emacs-lisp
+      (use-package magit
+	:config
+	(global-set-key (kbd "C-x g") 'magit-status))
+    #+end_src
 ** Packages
    Which-key for easy exploration
    #+begin_src emacs-lisp
