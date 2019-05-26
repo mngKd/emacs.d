@@ -203,3 +203,16 @@
        :config
        (which-key-mode))
    #+end_src   
+   Setup ledger
+   #+begin_src emacs-lisp
+     (use-package ledger-mode
+       :mode "\\.ledger\\'"
+       :config
+       (setq ledger-post-amount-alignment-at :decimal
+	     ledger-post-amount-alignment-column 60)
+       (use-package flycheck-ledger)
+       (add-to-list 'ledger-reports
+		    '("cleared_bal" "%(binary) -f %(ledger-file) bal --cleared")))
+   #+end_src
+
+
