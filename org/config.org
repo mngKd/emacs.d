@@ -1,20 +1,21 @@
 #+STARTUP: showeverything
 * Intro
-  This is my master .org config file
+  This is my master .org config fil
+
 * Configuration
 ** Package management
 *** Setup package archives
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (require 'package)
      (setq package-enable-at-startup nil)
      (setq package-archives '(("melpa"     . "https://melpa.org/packages/")
 			      ("org"       . "http://orgmode.org/elpa/")
 			      ("gnu"       . "http://elpa.gnu.org/packages/")))
      (package-initialize)		    
-   #+END_SRC
+   #+end_src
 
 *** Configure use-package
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (unless (package-installed-p 'use-package)
 	(package-refresh-contents)
 	(package-install 'use-package))
@@ -22,62 +23,62 @@
       (eval-when-compile
 	(require 'use-package))
       (setq use-package-always-ensure t)
-    #+END_SRC
+    #+end_src
 ** General settings
 *** Core
     Move customizations into a seperate file, to keep init.el tidy.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (setq custom-file "~/.emacs.d/custom.el")
       (unless (file-exists-p custom-file)
 	(with-temp-buffer
 	  (write-file custom-file)))
       (load custom-file)
-    #+END_SRC
+    #+end_src
     Disable any auto-saving and backup files
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (setq make-backup-files nil)
       (setq auto-save-default nil)
-    #+END_SRC
+    #+end_src
     No yes-or-no questions
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (defalias 'yes-or-no-p 'y-or-n-p)
-    #+END_SRC
+    #+end_src
     
 *** Visual
      Remove menubar, scrollbar, and more distracting GUI elements
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (setq inhibit-startup-screen t)
        (tool-bar-mode -1)
        (toggle-scroll-bar -1)
        (menu-bar-mode -1)
-     #+END_SRC
+     #+end_src
      Highlight matching parentheses and only those
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (show-paren-mode 1)
        (setq show-paren-style 'parenthesis)
-     #+END_SRC
+     #+end_src
 **** Themeing
      Set the theme, I really like the spacemacs theme
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package spacemacs-common
 	 :ensure spacemacs-theme
 	 :init
 	 (setq spacemacs-theme-org-height nil)
 	 :config
 	 (load-theme 'spacemacs-dark t))
-     #+END_SRC
+     #+end_src
      Also use the powerline-based modeline of spacemacs
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package spaceline
 	 :init
 	 (setq powerline-default-separator 'arrow-fade)
 	 :config
 	 (require 'spaceline-config)
 	 (spaceline-spacemacs-theme))
-     #+END_SRC
+     #+end_src
 **** Font
      Use a nice, monospaced font
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (set-face-attribute 'default nil
 			   :family "Fira Mono for Powerline"		    
        ;;;                 :family "Droid Sans Mono"
@@ -86,27 +87,44 @@
 			   :height 110
 			   :weight 'normal
 			   :width 'normal)
-     #+END_SRC
+     #+end_src
 ** Mastering emacs
    Tips and tricks taken from Mickey Petersen's 'Mastering Emacs'
 
    Sort apropos results by relevancy
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (setq apropos-sort-by-scores t)
-   #+END_SRC
+   #+end_src
 
    Enable ido mode and use flex matching
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (setq ido-enable-flex-matching t)
      (setq ido-everywhere t)
      (ido-mode t)
-   #+END_SRC
+   #+end_src
+
+   Use winner-mode to retrieve past window configurations
+   #+begin_src emacs-lisp
+     (setq winner-mode t)
+   #+end_src
 ** org-mode
+   Install latest, stable org-mode
+   #+begin_src emacs-lisp
+     (use-package org
+       :mode (("\\.\\(org\\|org_archive\\)$" . org-mode))
+       :ensure org-plus-contrib)
+   #+end_src
+   Add an easy template for emacs-lisp babel block (see [[https://emacs.stackexchange.com/questions/46795/is-it-possible-to-add-templates-other-than-begin-end-to-org-structure-temp][link]])
+   #+begin_src emacs-lisp
+     (require 'org-tempo)
+     (add-to-list 'org-structure-template-alist '("el" . "emacs-lisp"))
+   #+end_src
+
 ** Packages
    Which-key for easy exploration
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (use-package which-key
        :config
        (which-key-mode))
-   #+END_SRC
+   #+end_src
    

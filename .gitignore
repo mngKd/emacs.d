@@ -1,6 +1,8 @@
 # ignore emacs autosave files
 *~
-# ignore generated files
+# ignore generated/cache files from emacs
 org/*.el
 custom.el
 elpa/
+history
+ido.last
