@@ -1,2 +1,6 @@
 # ignore emacs autosave files
 *~
+# ignore generated files
+org/*.el
+custom.el
+elpa/
