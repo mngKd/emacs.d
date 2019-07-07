@@ -260,7 +260,7 @@
       (require 'helm-config)
     #+end_src
 
-    Change the default helm prefix map, since it is too close to 'C-x C-c'.
+    Change the default  helm prefix map, since it is too close to 'C-x C-c'.
     #+begin_src emacs-lisp
       (global-set-key (kbd "C-c h") 'helm-command-prefix)
       (global-unset-key (kbd "C-x c"))
@@ -319,11 +319,111 @@
     Set autoresize of helm
     #+begin_src emacs-lisp
       (setq helm-autoresize-max-height 0
-	    helm-autoresize-min-height 20)
+	    helm-autoresize-min-height 25)
       (helm-autoresize-mode 1)
     #+end_src
 
     Enable helm
     #+begin_src emacs-lisp
       (helm-mode 1)
+    #+end_src
+
+    Use helm with M-x and enable fuzzy matching
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "M-x") 'helm-M-x)
+      (setq helm-M-x-fuzzy-match t)
+    #+end_src
+
+    Show the helm kill-ring
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+    #+end_src
+
+    Use helm for switching buffers and enable fuzzy matching
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "C-x b") 'helm-mini)
+
+      (setq helm-buffers-fuzzy-matching t
+	    helm-recentf-fuzzy-match t)
+    #+end_src
+
+    Helm for find-files
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "C-x C-f") 'helm-find-files)
+    #+end_src
+
+    Enable fuzzy matching for helm-semantic-or-imenu
+    #+begin_src emacs-lisp
+      (setq helm-semantic-fuzzy-match t
+	    helm-imenu-fuzzy-match t)
+    #+end_src
+
+    Enable man page at point
+    #+begin_src emacs-lisp
+      (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+    #+end_src
+
+    Enable fuzzy matching also for helm locate
+    #+begin_src emacs-lisp
+      (setq helm-locate-fuzzy-match t)
+    #+end_src
+
+    Set helm-occur to a more convenient keybinding
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "C-c h o") 'helm-occur)
+    #+end_src
+
+    Enable fuzzy matching for helm-apropos
+    #+begin_src emacs-lisp
+      (setq helm-apropos-fuzzy-match t)
+    #+end_src
+
+    Fuzzy matching for lisp
+    #+begin_src emacs-lisp
+      (setq helm-lisp-fuzzy-completion t)
+    #+end_src
+
+    Show all mark rings easily
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+    #+end_src
+
+    Setup helm-register
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "C-c h x") 'helm-register)
+    #+end_src
+
+    Use helm-google-suggest with a sensible keybinding
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "C-c h g") 'helm-google-suggest)
+    #+end_src
+
+    Get instant results of elisp expressions in a helm buffer
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "C-c h M-:") 'helm-eval-expression-with-eldoc)
+    #+end_src
+
+    Use helm-eshell
+    #+begin_src emacs-lisp
+      (require 'helm-eshell)
+
+      (add-hook 'eshell-mode-hook
+		#'(lambda ()
+		    (define-key eshell-mode-map (kbd "C-c C-l") 'helm-eshell-history)))
+    #+end_src
+
+    Set-up history for M-x shell
+    #+begin_src emacs-lisp
+      (define-key shell-mode-map (kbd "C-c C-l") 'helm-comint-input-ring)
+    #+end_src
+
+    Use helm for minibuffer history
+    #+begin_src emacs-lisp
+      (define-key minibuffer-local-map (kbd "C-c C-l") 'helm-minibuffer-history)
+    #+end_src
+
+    Make active keybindings searchable by helm
+    #+begin_src emacs-lisp
+      (use-package helm-descbinds)
+      (helm-descbinds-mode)
     #+end_src
