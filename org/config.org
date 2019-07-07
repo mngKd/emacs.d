@@ -99,9 +99,9 @@
 
    Enable ido mode and use flex matching
    #+begin_src emacs-lisp
-     (ido-mode 1)
-     (setq ido-everywhere t)
-     (setq ido-enable-flex-matching t)
+     (ido-mode 0)
+     (setq ido-everywhere nil)
+     (setq ido-enable-flex-matching nil)
    #+end_src
 
    Use winner-mode to retrieve past window configurations
@@ -246,5 +246,84 @@
        (add-to-list 'ledger-reports
 		    '("cleared_bal" "%(binary) -f %(ledger-file) bal --cleared")))
    #+end_src
+*** Helm
+    Get helm package
+    #+begin_src emacs-lisp
+      (use-package helm)
+    #+end_src
+    Do configuration in the lines below, for easier commentation.
+    Most of the config is taken from the excellent [[https://tuhdo.github.io/helm-intro.html][documentation]] of Tuhdo.
+ 
+    Load the necessary modules
+    #+begin_src emacs-lisp
+      (require 'helm)
+      (require 'helm-config)
+    #+end_src
 
+    Change the default helm prefix map, since it is too close to 'C-x C-c'.
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "C-c h") 'helm-command-prefix)
+      (global-unset-key (kbd "C-x c"))
+    #+end_src
+    
+    Rebind TAB to persistent action and list actions using C-z.
+    TODO: check if TAB -> persistent action makes actual sense
+    #+begin_src emacs-lisp
+      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+      (define-key helm-map (kbd "C-z") 'helm-select-action)
+    #+end_src
 
+    Use curl for helm-google-suggest, if available
+    #+begin_src emacs-lisp
+      (when (executable-find "curl")
+	(setq helm-google-suggest-use-curl-p t))
+    #+end_src
+    
+    Open helm buffer inside current window
+    #+begin_src emacs-lisp
+      (setq helm-split-window-in-side-p t)
+    #+end_src
+
+    Search for library in require and declare-function sexp
+    #+begin_src emacs-lisp
+      (setq helm-ff-search-library-in-sexp t)
+    #+end_src
+
+    Scroll other window by 8 lines
+    #+begin_src emacs-lisp
+      (setq helm-scroll-amount 8)
+    #+end_src
+
+    More settings
+    #+begin_src emacs-lisp
+      (setq helm-ff-file-name-history-use-recentf t
+	    helm-echo-input-in-header-line t)
+    #+end_src
+
+    Hide minibuffer in helm session if we use the header line as input field
+    #+begin_src emacs-lisp
+      (defun mngkd/helm-hide-minibuffer-maybe ()
+	"Hide minibuffer in Helm session if we use the header line as input field."
+	(when (with-helm-buffer helm-echo-input-in-header-line)
+	  (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+	    (overlay-put ov 'window (selected-window))
+	    (overlay-put ov 'face
+			 (let ((bg-color (face-background 'default nil)))
+			   `(:background ,bg-color :foreground ,bg-color)))
+	    (setq-local cursor-type nil))))
+
+      (add-hook 'helm-minibuffer-set-up-hook
+		'mngkd/helm-hide-minibuffer-maybe)
+    #+end_src
+
+    Set autoresize of helm
+    #+begin_src emacs-lisp
+      (setq helm-autoresize-max-height 0
+	    helm-autoresize-min-height 20)
+      (helm-autoresize-mode 1)
+    #+end_src
+
+    Enable helm
+    #+begin_src emacs-lisp
+      (helm-mode 1)
+    #+end_src
