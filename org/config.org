@@ -163,14 +163,14 @@
 
    Function to edit current buffer as root user and map it to <f12>
    #+begin_src emacs-lisp
-     (defun mng-sudo ()
+     (defun mngkd/sudo ()
        "Use TRAMP to edit current buffer as root user"
        (interactive)
        (when buffer-file-name
 	 (find-alternate-file
 	  (concat "/sudo:root@localhost:"
 		  buffer-file-name))))
-     (global-set-key (kbd "<f12>") 'mng-sudo)
+     (global-set-key (kbd "<f12>") 'mngkd/sudo)
    #+end_src
 
    Enable dired-x by default
@@ -215,6 +215,51 @@
     #+begin_src emacs-lisp
       (use-package cmake-mode)
     #+end_src
+    Use company for general completion
+    #+begin_src emacs-lisp
+      (use-package company
+	:config
+	(add-hook 'after-init-hook 'global-company-mode))
+    #+end_src
+    Set delay for company to 0.
+    #+begin_src emacs-lisp
+      (setq company-idle-delay 0)
+    #+end_src
+    Need at least 3 characters before company kicks in
+    #+begin_src emacs-lisp
+      (setq company-minimum-prefix-length 3)
+    #+end_src
+    Use C-n/p to select entries, instead of M-n/p
+    #+begin_src emacs-lisp
+      (with-eval-after-load 'company
+	(define-key company-active-map (kbd "M-n") nil)
+	(define-key company-active-map (kbd "M-p") nil)
+	(define-key company-active-map (kbd "C-n") #'company-select-next)
+	(define-key company-active-map (kbd "C-p") #'company-select-previous)
+	(define-key company-active-map (kbd "M-/") #'company-complete-common-or-cycle))
+    #+end_src
+
+*** C++
+    Install irony
+    #+begin_src emacs-lisp
+      (use-package irony)
+    #+end_src
+    Hook irony into c++-mode and c-mode
+    #+begin_src emacs-lisp
+      (add-hook 'c++-mode-hook 'irony-mode)
+      (add-hook 'c-mode-hook 'irony-mode)
+      (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+    #+end_src
+    Install irony for company
+    #+begin_src emacs-lisp
+      (use-package company-irony)
+    #+end_src
+    and enable the backend
+    #+begin_src emacs-lisp
+      (require 'company)
+      (add-to-list 'company-backends 'company-irony)
+    #+end_src
+*** Python
     Setup elpy
     #+begin_src emacs-lisp
       (use-package elpy
