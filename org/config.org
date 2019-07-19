@@ -201,6 +201,20 @@
       (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
     #+end_src
 ** Programming
+   Use projectile for general project management
+   #+begin_src emacs-lisp
+     (use-package projectile
+       :config
+       (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+       (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+       (projectile-mode +1))
+
+     (projectile-global-mode)
+     (setq projectile-completion-system 'helm)
+
+     (use-package helm-projectile)
+     (helm-projectile-on)
+   #+end_src
     Install magit, the best git integration ever
     #+begin_src emacs-lisp
       (use-package magit
@@ -240,6 +254,24 @@
     #+end_src
 
 *** C++
+    Setup rtags
+    #+begin_src emacs-lisp
+      (use-package rtags)
+      (require 'rtags)
+      (require 'company-rtags)
+
+      (setq rtags-completions-enabled t)
+      (eval-after-load 'company
+	'(add-to-list
+	  'company-backends 'company-rtags))
+
+      (setq rtags-autostart-diagnostics t)
+      (rtags-enable-standard-keybindings)
+    #+end_src
+    Use rtags with helm
+    #+begin_src emacs-lisp
+      (setq rtags-display-result-backend 'helm)
+    #+end_src
     Install irony
     #+begin_src emacs-lisp
       (use-package irony)
@@ -258,6 +290,30 @@
     #+begin_src emacs-lisp
       (require 'company)
       (add-to-list 'company-backends 'company-irony)
+    #+end_src
+
+    Use flycheck for C/C++
+    #+begin_src emacs-lisp
+      (add-hook 'c++-mode-hook 'flycheck-mode)
+      (add-hook 'c-mode-hook 'flycheck-mode)
+    #+end_src
+    Use rtags backend with flycheck
+    #+begin_src emacs-lisp
+      (use-package flycheck-rtags)
+      (require 'flycheck-rtags)
+
+      (defun mngkd/flycheck-rtags-setup ()
+	(flycheck-select-checker 'rtags)
+	(setq-local flycheck-highlighting-mode nil)
+	(setq-local flycheck-check-syntax-automatically nil))
+
+      (add-hook 'c-mode-common-hook #'mngkd/flycheck-rtags-setup)
+    #+end_src
+
+    CMake automatic setup
+    #+begin_src emacs-lisp
+      (use-package cmake-ide)
+      (cmake-ide-setup)
     #+end_src
 *** Python
     Setup elpy
