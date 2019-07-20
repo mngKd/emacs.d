@@ -73,6 +73,27 @@
       (global-set-key (kbd "C-x C-b") 'ibuffer)
       (setq ibuffer-expert t)
     #+end_src
+    Use avy for fast in-buffer navigation
+    #+begin_src emacs-lisp
+      (use-package avy
+	:bind
+	("M-s" . avy-goto-char))
+    #+end_src
+    Write custom function to improve splitting of buffers
+    #+begin_src emacs-lisp
+      (defun mngkd/split-window-right-and-follow ()
+	(interactive)
+	(split-window-right)
+	(other-window 1))
+
+      (defun mngkd/split-window-below-and-follow ()
+	(interactive)
+	(split-window-below)
+	(other-window 1))
+
+      (global-set-key (kbd "C-x 2") 'mngkd/split-window-below-and-follow)
+      (global-set-key (kbd "C-x 3") 'mngkd/split-window-right-and-follow)
+    #+end_src
 *** Terminal
     Always use bash as defauhlt terminal
     #+begin_src emacs-lisp
@@ -85,7 +106,6 @@
     #+begin_src emacs-lisp
       (global-set-key (kbd "<s-return>") 'ansi-term)
     #+end_src
-    
 *** Visual
      Remove menubar, scrollbar, and more distracting GUI elements
      #+begin_src emacs-lisp
@@ -98,6 +118,12 @@
      #+begin_src emacs-lisp
        (show-paren-mode 1)
        (setq show-paren-style 'parenthesis)
+     #+end_src
+     Use rainbow mode to display hexadecimal values
+     #+begin_src emacs-lisp
+       (use-package rainbow-mode
+	 :init
+	 (rainbow-mode 1))
      #+end_src
 **** Themeing
      Set the theme, I really like the spacemacs theme
