@@ -44,6 +44,42 @@
     #+begin_src emacs-lisp
       (defalias 'yes-or-no-p 'y-or-n-p)
     #+end_src
+    Do not re-center point while scrolling
+    #+begin_src emacs-lisp
+      (setq scroll-conservatively 100)
+    #+end_src
+    Do not emit an audible bell
+    #+begin_src emacs-lisp
+      (setq ring-bell-function 'ignore)
+    #+end_src
+    Show current line of cursor (only in GUI-mode)
+    #+begin_src emacs-lisp
+      (when window-system
+	(global-hl-line-mode t))
+    #+end_src
+    Highlight cursor when switching buffers
+    #+begin_src emacs-lisp
+      (use-package beacon
+	:init
+	(beacon-mode 1))
+    #+end_src
+    Prettify symbols
+    #+begin_src emacs-lisp
+      (when window-system
+	(global-prettify-symbols-mode t))
+    #+end_src
+*** Terminal
+    Always use bash as defauhlt terminal
+    #+begin_src emacs-lisp
+      (defvar mngkd/term-shell "/bin/bash")
+      (defadvice ansi-term (before force-bash)
+	(interactive (list mngkd/term-shell)))
+      (ad-activate 'ansi-term)
+    #+end_src
+    Use Super-Return to launch a terminal
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "<s-return>") 'ansi-term)
+    #+end_src
     
 *** Visual
      Remove menubar, scrollbar, and more distracting GUI elements
@@ -225,9 +261,23 @@
     #+begin_src emacs-lisp
       (use-package realgud)
     #+end_src
-    Font-locking for CMakelists
+
+    Setup CMake
     #+begin_src emacs-lisp
-      (use-package cmake-mode)
+      (use-package cmake-mode
+	:config
+	(setq auto-mode-alist
+	      (append
+	       '(("CMakeLists\\.txt\\'" . cmake-mode))
+	       '(("\\.cmake\\'" . cmake-mode))
+	       auto-mode-alist)))
+    #+end_src
+    Use cmake-company as backend for company
+    #+begin_src emacs-lisp
+      (defun mngkd/company-cmake-setup ()
+	(add-to-list 'company-backends 'company-cmake))
+      (add-hook 'cmake-mode-hook 'mngkd/company-cmake-setup)
+
     #+end_src
     Use company for general completion
     #+begin_src emacs-lisp
@@ -329,6 +379,7 @@
 	(require 'ein-notebook)
 	(require 'ein-subpackages))
     #+end_src
+*** ROS
 ** Packages
    Which-key for easy exploration
    #+begin_src emacs-lisp
