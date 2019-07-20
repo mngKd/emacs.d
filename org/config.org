@@ -27,7 +27,7 @@
     #+end_src
 ** General settings
 *** Core
-    Move customizations into a seperate file, to keep init.el tidy.
+    Move customizations into a separate file, to keep init.el tidy.
     #+begin_src emacs-lisp
       (setq custom-file "~/.emacs.d/custom.el")
       (unless (file-exists-p custom-file)
@@ -67,6 +67,11 @@
     #+begin_src emacs-lisp
       (when window-system
 	(global-prettify-symbols-mode t))
+    #+end_src
+    Use ibuffer for showing buffer list
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "C-x C-b") 'ibuffer)
+      (setq ibuffer-expert t)
     #+end_src
 *** Terminal
     Always use bash as defauhlt terminal
@@ -224,6 +229,12 @@
    #+begin_src emacs-lisp
      (require 'org-tempo)
      (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+   #+end_src
+   Use org-bullets for more pleasing headlines
+   #+begin_src emacs-lisp
+     (use-package org-bullets
+       :config
+       (add-hook 'org-mode-hook (lambda () (org-bullets-mode))))
    #+end_src
 *** LaTeX support
     Install CDLaTeX. Also install auctex, CDLaTeX requires texmathp.el
