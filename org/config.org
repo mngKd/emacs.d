@@ -338,8 +338,47 @@
 	(define-key company-active-map (kbd "C-p") #'company-select-previous)
 	(define-key company-active-map (kbd "M-/") #'company-complete-common-or-cycle))
     #+end_src
-
 *** C++
+    Install lsp-mode
+    #+begin_src emacs-lisp
+      (use-package lsp-mode
+	:commands lsp)
+    #+end_src
+    Install lsp-ui for higher level UI modules
+    #+begin_src emacs-lisp
+      (use-package lsp-ui
+	:requires lsp-mode flycheck
+	:commands lsp-ui
+	:config
+	(setq lsp-ui-doc-enable t
+	      lsp-ui-doc-use-childframe t
+	      lsp-ui-doc-position 'top-edge
+	      lsp-ui-doc-include-signature t
+	      lsp-ui-sideline-enable nil
+	      lsp-ui-flycheck-list-position 'right
+	      lsp-ui-flycheck-live-reporting t
+	      lsp-ui-peek-enable t
+	      lsp-ui-peek-list-width 60
+	      lsp-ui-peek-peek-height 25))
+      (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+    #+end_src
+    
+    Add company backend
+    #+begin_src emacs-lisp
+      (use-package company-lsp
+	:commands company-lsp
+	:config
+	(push 'company-lsp company-backends))
+    #+end_src
+    Install ccls which does the heavy lifting
+    #+begin_src emacs-lisp
+      (use-package ccls
+	:config
+	(setq ccls-executable "/usr/local/bin/ccls")
+	(setq lsp-prefer-flymake nil)
+	(setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
+	:hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp))))
+    #+end_src
 *** Python
     Setup elpy
     #+begin_src emacs-lisp
