@@ -383,6 +383,30 @@
     #+begin_src emacs-lisp
       (add-hook 'prog-mode-hook (lambda () (subword-mode 1)))
     #+end_src
+*** Company
+    Use company for general completion
+    #+begin_src emacs-lisp
+      (use-package company
+	:config
+	(add-hook 'after-init-hook 'global-company-mode))
+    #+end_src
+    Set delay for company to 0.
+    #+begin_src emacs-lisp
+      (setq company-idle-delay 0)
+    #+end_src
+    Need at least 3 characters before company kicks in
+    #+begin_src emacs-lisp
+      (setq company-minimum-prefix-length 3)
+    #+end_src
+    Use C-n/p to select entries, instead of M-n/p
+    #+begin_src emacs-lisp
+      (with-eval-after-load 'company
+	(define-key company-active-map (kbd "M-n") nil)
+	(define-key company-active-map (kbd "M-p") nil)
+	(define-key company-active-map (kbd "C-n") #'company-select-next)
+	(define-key company-active-map (kbd "C-p") #'company-select-previous)
+	(define-key company-active-map (kbd "C-SPC") #'company-abort))
+    #+end_src
 *** LSP
     Install lsp-mode
     #+begin_src emacs-lisp
@@ -422,30 +446,6 @@
 	(setq company-transformers nil
 	      company-lsp-async t
 	      company-lsp-cache-candidates nil))
-    #+end_src
-*** Company
-    Use company for general completion
-    #+begin_src emacs-lisp
-      (use-package company
-	:config
-	(add-hook 'after-init-hook 'global-company-mode))
-    #+end_src
-    Set delay for company to 0.
-    #+begin_src emacs-lisp
-      (setq company-idle-delay 0)
-    #+end_src
-    Need at least 3 characters before company kicks in
-    #+begin_src emacs-lisp
-      (setq company-minimum-prefix-length 3)
-    #+end_src
-    Use C-n/p to select entries, instead of M-n/p
-    #+begin_src emacs-lisp
-      (with-eval-after-load 'company
-	(define-key company-active-map (kbd "M-n") nil)
-	(define-key company-active-map (kbd "M-p") nil)
-	(define-key company-active-map (kbd "C-n") #'company-select-next)
-	(define-key company-active-map (kbd "C-p") #'company-select-previous)
-	(define-key company-active-map (kbd "SPC") #'company-abort))
     #+end_src
 *** CMake
     Setup CMake
@@ -491,6 +491,15 @@
 	(require 'ein-subpackages))
     #+end_src
 *** ROS
+    Include rosemacs package 
+    #+begin_src emacs-lisp
+      (add-to-list 'load-path "/opt/ros/kinetic/share/emacs/site-lisp")
+      (require 'rosemacs-config)
+    #+end_src
+    Use s-r for rosemacs prefix
+    #+begin_src emacs-lisp
+      (global-set-key (kbd "s-r") ros-keymap)
+    #+end_src
 ** Packages
    Which-key for easy exploration
    #+begin_src emacs-lisp
@@ -711,7 +720,6 @@
 	   (let ((xref-show-xrefs-function 'xref--show-xref-buffer))
 	     ad-do-it)))
      #+end_src
-
 *** dmenu
     Have a emacs internal launcher to start applications
     #+begin_src emacs-lisp
