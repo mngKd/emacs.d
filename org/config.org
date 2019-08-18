@@ -141,8 +141,7 @@
      Display colored delimiters for better perception
      #+begin_src emacs-lisp
        (use-package rainbow-delimiters
-	 :init
-	 (rainbow-delimiters-mode 1))
+	 :hook (prog-mode . rainbow-delimiters-mode))
      #+end_src
 **** Rainbow mode
       Use rainbow mode to display hexadecimal values
@@ -212,7 +211,7 @@
 	    (buffer-substring
 	     (point-at-bol)
 	     (point-at-eol)))))
-       (global-set-key (kbd "C-c w l") 'mngkd/copy-whole-line)
+       (global-set-key (kbd "s-l") 'mngkd/copy-whole-line)
      #+end_src
 **** Kill all open buffers
      #+begin_src emacs-lisp
@@ -358,7 +357,7 @@
     #+begin_src emacs-lisp
       (use-package magit
 	:config
-	(global-set-key (kbd "M-g") 'magit-status))
+	(global-set-key (kbd "s-g") 'magit-status))
     #+end_src
 *** Debugging
     Install a good debugger
@@ -409,7 +408,7 @@
 	(define-key company-active-map (kbd "M-p") nil)
 	(define-key company-active-map (kbd "C-n") #'company-select-next)
 	(define-key company-active-map (kbd "C-p") #'company-select-previous)
-	(define-key company-active-map (kbd "M-/") #'company-complete-common-or-cycle))
+	(define-key company-active-map (kbd "SPC") #'company-abort))
     #+end_src
 
     Setup rtags
@@ -467,12 +466,6 @@
 
       (add-hook 'c-mode-common-hook #'mngkd/flycheck-rtags-setup)
     #+end_src
-
-    CMake automatic setup
-    #+begin_src emacs-lisp
-      (use-package cmake-ide)
-      (cmake-ide-setup)
-    #+end_src
 *** Python
     Setup elpy
     #+begin_src emacs-lisp
@@ -504,7 +497,7 @@
 	     ledger-post-amount-alignment-column 60)
        (use-package flycheck-ledger)
        (add-to-list 'ledger-reports
-		    '("cleared_bal" "%(binary) -f %(ledger-file) bal --cleared")))
+		    '("cleared_bal" "%(binary) -f %(ledger-file) bal --cleared"))
    #+end_src
 *** Helm
     Get helm package
