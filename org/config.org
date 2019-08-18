@@ -61,7 +61,15 @@
     #+begin_src emacs-lisp
       (use-package beacon
 	:init
-	(beacon-mode 1))
+	(beacon-mode 1)
+	:config
+	(setq beacon-blink-when-buffer-changes t)
+	(setq beacon-blink-when-window-changes t)
+	(setq beacon-blink-when-point-moves-horizontally nil)
+	(setq beacon-blink-when-point-moves-vertically nil)
+	(setq beacon-blink-duration .2)
+	(setq beacon-blink-delay .2)
+	(setq beacon-size 20))
     #+end_src
     Prettify symbols
     #+begin_src emacs-lisp
@@ -128,6 +136,13 @@
 				   (?\" . ?\")
 				   ))
        (electric-pair-mode t)
+     #+end_src
+**** Rainbow delimiters
+     Display colored delimiters for better perception
+     #+begin_src emacs-lisp
+       (use-package rainbow-delimiters
+	 :init
+	 (rainbow-delimiters-mode 1))
      #+end_src
 **** Rainbow mode
       Use rainbow mode to display hexadecimal values
@@ -327,16 +342,16 @@
 *** Projectile
     Use projectile for general project management
     #+begin_src emacs-lisp
-     (use-package projectile
-       :config
-       (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-       (projectile-mode +1))
+      (use-package projectile
+	:config
+	(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+	(projectile-mode +1)) 
 
-     (projectile-global-mode)
-     (setq projectile-completion-system 'helm)
+      (projectile-global-mode)
+      (setq projectile-completion-system 'helm)
 
-     (use-package helm-projectile)
-     (helm-projectile-on)
+      (use-package helm-projectile)
+      (helm-projectile-on)
     #+end_src
 *** Magit
     Install magit, the best git integration ever
