@@ -278,7 +278,6 @@
    #+begin_src emacs-lisp
      (use-package projectile
        :config
-       (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
        (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
        (projectile-mode +1))
 
@@ -292,7 +291,7 @@
     #+begin_src emacs-lisp
       (use-package magit
 	:config
-	(global-set-key (kbd "C-x g") 'magit-status))
+	(global-set-key (kbd "M-g") 'magit-status))
     #+end_src
     Install a good debugger
     #+begin_src emacs-lisp
