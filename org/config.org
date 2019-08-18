@@ -127,6 +127,18 @@
        (show-paren-mode 1)
        (setq show-paren-style 'parenthesis)
      #+end_src
+**** diminish
+     Hide some minor modes to prevent cluttering of modeline
+     #+begin_src emacs-lisp
+       (use-package diminish
+	 :init
+	 (diminish 'hungry-delete-mode)
+	 (diminish 'beacon-mode)
+	 (diminish 'which-key-mode)
+	 (diminish 'subword-mode)
+	 (diminish 'helm-mode)
+	 (diminish 'org-cdlatex-mode))
+     #+end_src
 **** Electric pairs
      #+begin_src emacs-lisp
        (setq electric-pair-pairs '(
@@ -167,6 +179,7 @@
 	 (setq powerline-default-separator 'arrow-fade)
 	 :config
 	 (require 'spaceline-config)
+	 (setq powerline-default-separator (quote arrow))
 	 (spaceline-spacemacs-theme))
      #+end_src
 **** Font
@@ -679,4 +692,11 @@
     #+begin_src emacs-lisp
       (use-package helm-descbinds)
       (helm-descbinds-mode)
+    #+end_src
+*** dmenu
+    Have a emacs internal launcher to start applications
+    #+begin_src emacs-lisp
+      (use-package dmenu
+	:bind
+	("s-SPC" . 'dmenu))
     #+end_src
