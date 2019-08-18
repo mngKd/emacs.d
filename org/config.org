@@ -179,8 +179,9 @@
 	 (setq powerline-default-separator 'arrow-fade)
 	 :config
 	 (require 'spaceline-config)
-	 (setq powerline-default-separator (quote arrow))
-	 (spaceline-spacemacs-theme))
+	 (setq powerline-default-separator 'arrow-fade)
+	 (spaceline-spacemacs-theme)
+	 (spaceline-helm-mode))
      #+end_src
 **** Font
      Use a nice, monospaced font
@@ -382,24 +383,47 @@
     #+begin_src emacs-lisp
       (add-hook 'prog-mode-hook (lambda () (subword-mode 1)))
     #+end_src
-*** C++
-    Setup CMake
+*** LSP
+    Install lsp-mode
     #+begin_src emacs-lisp
-      (use-package cmake-mode
-	:config
-	(setq auto-mode-alist
-	      (append
-	       '(("CMakeLists\\.txt\\'" . cmake-mode))
-	       '(("\\.cmake\\'" . cmake-mode))
-	       auto-mode-alist)))
+      (use-package lsp-mode
+	:commands lsp
+	:hook
+	(python-mode-hook . lsp))
     #+end_src
-    Use cmake-company as backend for company
-    #+begin_src emacs-lisp
-      (defun mngkd/company-cmake-setup ()
-	(add-to-list 'company-backends 'company-cmake))
-      (add-hook 'cmake-mode-hook 'mngkd/company-cmake-setup)
 
+    Install lsp-ui for higher level UI modules
+    #+begin_src emacs-lisp
+      (use-package lsp-ui
+	:requires lsp-mode flycheck
+	:commands lsp-ui
+	:config
+	(setq lsp-ui-doc-enable t
+	      lsp-ui-doc-use-childframe t
+	      lsp-ui-doc-position 'top-edge
+	      lsp-ui-doc-include-signature t
+	      lsp-ui-sideline-enable nil
+	      lsp-ui-flycheck-list-position 'right
+	      lsp-ui-flycheck-live-reporting t
+	      lsp-ui-peek-enable t
+	      lsp-ui-peek-list-width 60
+	      lsp-ui-peek-peek-height 25
+	      lsp-ui-peek-fontify 'on-demand))
+      (add-hook 'lsp-mode-hook 'lsp-ui-mode)
     #+end_src
+    
+    Add company backend
+    #+begin_src emacs-lisp
+      (use-package company-lsp
+	:commands company-lsp
+	:requires company
+	:config
+	(push 'company-lsp company-backends)
+	(setq company-transformers nil
+	      company-lsp-async t
+	      company-lsp-cache-candidates nil))
+    #+end_src
+*** Company
     Use company for general completion
     #+begin_src emacs-lisp
       (use-package company
@@ -423,38 +447,24 @@
 	(define-key company-active-map (kbd "C-p") #'company-select-previous)
 	(define-key company-active-map (kbd "SPC") #'company-abort))
     #+end_src
+*** CMake
+    Setup CMake
+    #+begin_src emacs-lisp
+      (use-package cmake-mode
+	:config
+	(setq auto-mode-alist
+	      (append
+	       '(("CMakeLists\\.txt\\'" . cmake-mode))
+	       '(("\\.cmake\\'" . cmake-mode))
+	       auto-mode-alist)))
+    #+end_src
+    Use cmake-company as backend for company
+    #+begin_src emacs-lisp
+      (defun mngkd/company-cmake-setup ()
+	(add-to-list 'company-backends 'company-cmake))
+      (add-hook 'cmake-mode-hook 'mngkd/company-cmake-setup)
+    #+end_src
 *** C++
-    Install lsp-mode
-    #+begin_src emacs-lisp
-      (use-package lsp-mode
-	:commands lsp)
-    #+end_src
-    Install lsp-ui for higher level UI modules
-    #+begin_src emacs-lisp
-      (use-package lsp-ui
-	:requires lsp-mode flycheck
-	:commands lsp-ui
-	:config
-	(setq lsp-ui-doc-enable t
-	      lsp-ui-doc-use-childframe t
-	      lsp-ui-doc-position 'top-edge
-	      lsp-ui-doc-include-signature t
-	      lsp-ui-sideline-enable nil
-	      lsp-ui-flycheck-list-position 'right
-	      lsp-ui-flycheck-live-reporting t
-	      lsp-ui-peek-enable t
-	      lsp-ui-peek-list-width 60
-	      lsp-ui-peek-peek-height 25))
-      (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-    #+end_src
-    
-    Add company backend
-    #+begin_src emacs-lisp
-      (use-package company-lsp
-	:commands company-lsp
-	:config
-	(push 'company-lsp company-backends))
-    #+end_src
     Install ccls which does the heavy lifting
     #+begin_src emacs-lisp
       (use-package ccls
@@ -464,14 +474,13 @@
 	(setq-default flycheck-disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
 	:hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp))))
     #+end_src
-
 *** Python
-    Setup elpy
-    #+begin_src emacs-lisp
-      (use-package elpy
-	:config
-	(elpy-enable))
-    #+end_src
+    # Setup elpy
+    # #+begin_src emacs-lisp
+    #   (use-package elpy
+    # 	:config
+    # 	(elpy-enable))
+    # #+end_src
     Use EIN to interface with jupyter notebooks
     #+begin_src emacs-lisp
       (use-package ein
@@ -496,7 +505,7 @@
 	     ledger-post-amount-alignment-column 60)
        (use-package flycheck-ledger)
        (add-to-list 'ledger-reports
-		    '("cleared_bal" "%(binary) -f %(ledger-file) bal --cleared"))
+		    '("cleared_bal" "%(binary) -f %(ledger-file) bal --cleared")))
    #+end_src
 *** Helm
     Get helm package
