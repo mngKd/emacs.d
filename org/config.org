@@ -119,12 +119,23 @@
        (show-paren-mode 1)
        (setq show-paren-style 'parenthesis)
      #+end_src
-     Use rainbow mode to display hexadecimal values
+**** Electric pairs
      #+begin_src emacs-lisp
-       (use-package rainbow-mode
-	 :init
-	 (rainbow-mode 1))
+       (setq electric-pair-pairs '(
+				   (?\( . ?\))
+				   (?\[ . ?\])
+				   (?\{ . ?\})
+				   (?\" . ?\")
+				   ))
+       (electric-pair-mode t)
      #+end_src
+**** Rainbow mode
+      Use rainbow mode to display hexadecimal values
+      #+begin_src emacs-lisp
+	(use-package rainbow-mode
+	  :init
+	  (rainbow-mode 1))
+      #+end_src
 **** Themeing
      Set the theme, I really like the spacemacs theme
      #+begin_src emacs-lisp
@@ -155,6 +166,45 @@
 			   :height 110
 			   :weight 'normal
 			   :width 'normal)
+     #+end_src
+*** Improvements
+**** Kill whole word
+     #+begin_src emacs-lisp
+       (defun mngkd/kill-whole-word ()
+	 (interactive)
+	 (backward-word 1)
+	 (kill-word 1))
+       (global-set-key (kbd "s-d") 'mngkd/kill-whole-word)
+     #+end_src
+**** Always kill current buffer
+     #+begin_src emacs-lisp
+       (defun mngkd/kill-current-buffer ()
+	 (interactive)
+	 (kill-buffer (current-buffer)))
+       (global-set-key (kbd "C-x k") 'mngkd/kill-current-buffer)
+     #+end_src
+**** Hungry delete
+     #+begin_src emacs-lisp
+       (use-package hungry-delete
+	 :config (global-hungry-delete-mode))
+     #+end_src
+**** Copy whole line
+     #+begin_src emacs-lisp
+       (defun mngkd/copy-whole-line ()
+	 (interactive)
+	 (save-excursion
+	   (kill-new
+	    (buffer-substring
+	     (point-at-bol)
+	     (point-at-eol)))))
+       (global-set-key (kbd "C-c w l") 'mngkd/copy-whole-line)
+     #+end_src
+**** Kill all open buffers
+     #+begin_src emacs-lisp
+       (defun mngkd/kill-all-buffers ()
+	 (interactive)
+	 (mapc 'kill-buffer (buffer-list)))
+       (global-set-key (kbd "C-x K") 'mngkd/kill-all-buffers)
      #+end_src
 ** Mastering emacs
    Tips and tricks taken from Mickey Petersen's 'Mastering Emacs'
@@ -274,8 +324,9 @@
       (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
     #+end_src
 ** Programming
-   Use projectile for general project management
-   #+begin_src emacs-lisp
+*** Projectile
+    Use projectile for general project management
+    #+begin_src emacs-lisp
      (use-package projectile
        :config
        (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
@@ -286,18 +337,25 @@
 
      (use-package helm-projectile)
      (helm-projectile-on)
-   #+end_src
+    #+end_src
+*** Magit
     Install magit, the best git integration ever
     #+begin_src emacs-lisp
       (use-package magit
 	:config
 	(global-set-key (kbd "M-g") 'magit-status))
     #+end_src
+*** Debugging
     Install a good debugger
     #+begin_src emacs-lisp
       (use-package realgud)
     #+end_src
-
+*** Subword mode
+    Enable subword mode in programming    
+    #+begin_src emacs-lisp
+      (add-hook 'prog-mode-hook (lambda () (subword-mode 1)))
+    #+end_src
+*** C++
     Setup CMake
     #+begin_src emacs-lisp
       (use-package cmake-mode
@@ -339,7 +397,6 @@
 	(define-key company-active-map (kbd "M-/") #'company-complete-common-or-cycle))
     #+end_src
 
-*** C++
     Setup rtags
     #+begin_src emacs-lisp
       (use-package rtags)
