@@ -505,6 +505,39 @@
     #+begin_src emacs-lisp
       (global-set-key (kbd "s-r") ros-keymap)
     #+end_src
+    Add yaml support
+    #+begin_src emacs-lisp
+      (use-package yaml-mode
+	:init
+	(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+	(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode)))
+    #+end_src
+    Add commands to build catkin ws
+    #+begin_src emacs-lisp
+      (setq catkin-link-script (expand-file-name "~/git/catkin_link/catkin_link.py"))
+      (defun mngkd/catkin-build (dir)
+	"Run catkin build in DIR."
+	(interactive (list(read-directory-name "Directory:")))
+	(let* ((default-directory dir)
+	       (compilation-buffer-name-function (lambda (major-mode-name) "*catkin_build*")))
+	  (progn
+	    (setq compilation-scroll-output 1)
+	    (compile "catkin build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -- --no-color --no-notify")
+	    (message "%s" "I am done")
+	    (setq cmd-str (format "/usr/bin/python3 %s %s" catkin-link-script dir))
+	    (shell-command-to-string cmd-str))))
+      (global-set-key (kbd "s-r b") 'mngkd/catkin-build)
+    #+end_src
+    Also for cleaning the ws
+    #+begin_src emacs-lisp
+      (defun mngkd/catkin-clean (dir)
+	"Clean catkin workspace."
+	(interactive (list(read-directory-name "WS-root:")))
+	(progn
+	  (cd dir)
+	  (shell-command-to-string "catkin clean -y")))
+      (global-set-key (kbd "s-r c") 'mngkd/catkin-clean)
+    #+end_src
 ** Packages
    Which-key for easy exploration
    #+begin_src emacs-lisp
