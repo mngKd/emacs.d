@@ -411,9 +411,7 @@
     Install lsp-mode
     #+begin_src emacs-lisp
       (use-package lsp-mode
-	:commands lsp
-	:hook
-	(python-mode-hook . lsp))
+	:commands lsp)
     #+end_src
 
     Install lsp-ui for higher level UI modules
@@ -427,6 +425,7 @@
 	      lsp-ui-doc-position 'top-edge
 	      lsp-ui-doc-include-signature t
 	      lsp-ui-sideline-enable nil
+	      lsp-ui-sideline-ignore-duplicate t
 	      lsp-ui-flycheck-list-position 'right
 	      lsp-ui-flycheck-live-reporting t
 	      lsp-ui-peek-enable t
@@ -477,12 +476,18 @@
 	:hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp))))
     #+end_src
 *** Python
-    # Setup elpy
-    # #+begin_src emacs-lisp
-    #   (use-package elpy
-    # 	:config
-    # 	(elpy-enable))
-    # #+end_src
+    Configure lsp-mode with python
+    #+begin_src emacs-lisp
+      (require 'lsp-clients)
+      (add-hook 'python-mode-hook 'lsp)
+    #+end_src
+    Use autopep8 to fix violations automagically
+    #+begin_src emacs-lisp
+      (use-package py-autopep8
+	:config
+	(setq py-autopep8-options '("--max-line-length=100"))
+	:hook (python-mode . py-autopep8-enable-on-save))
+    #+end_src
     Use EIN to interface with jupyter notebooks
     #+begin_src emacs-lisp
       (use-package ein
