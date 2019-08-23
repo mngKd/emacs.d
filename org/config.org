@@ -1,3 +1,4 @@
+
 #+STARTUP: showeverything
 * Intro
   This is my master .org config file
@@ -496,6 +497,33 @@
 	(require 'ein-subpackages))
     #+end_src
 *** ROS
+    Add environment variables prior to package
+    #+begin_src emacs-lisp
+      (defun mngkd/append-env-var (var value)
+	(setq old-var (getenv var))
+	(if old-var
+	    (setenv var (concat value ":" old-var))
+	  (setenv var value)))
+
+      (defun mngkd/setup-ros-env ()
+	(setenv "ROS_ROOT" "/opt/ros/kinetic/share/ros")
+	(mngkd/append-env-var "ROS_PACKAGE_PATH" "/home/dm/ros_ws/ros_emacs_ws/src:/opt/ros/kinetic/share")
+	(setenv "ROS_MASTER_URI" "http://localhost:11311")
+	(setenv "ROS_VERSION" "1")
+	(mngkd/append-env-var "ROSLISP_PACKAGE_DIRECTORIES" "/home/dm/ros_ws/ros_emacs_ws/devel/share/common-lisp")
+	(setenv "ROS_DISTRO" "kinetic")
+	(mngkd/append-env-var "PYTHONPATH" "/opt/ros/kinetic/lib/python2.7/dist-packages")
+	(mngkd/append-env-var "PKG_CONFIG_PATH" "/home/dm/ros_ws/ros_emacs_ws/devel/lib/pkgconfig:/opt/ros/kinetic/lib/pkgconfig:/opt/ros/kinetic/lib/x86_64-linux-gnu/pkgconfig")
+	(mngkd/append-env-var "CMAKE_PREFIX_PATH" "/home/dm/ros_ws/ros_emacs_ws/devel:/opt/ros/kinetic")
+	(setenv "ROS_ETC_DIR" "/opt/ros/kinetic/etc/ros")
+	(mngkd/append-env-var
+	 "LD_LIBRARY_PATH" "/home/dm/ros_ws/ros_emacs_ws/devel/lib:/opt/ros/kinetic/lib:/opt/ros/kinetic/lib/x86_64-linux-gnu")
+	(mngkd/append-env-var "PATH" "/opt/ros/kinetic/bin")
+	(add-to-list 'exec-path "/opt/ros/kinetic/bin"))
+
+      (mngkd/setup-ros-env)
+    #+end_src
+
     Include rosemacs package 
     #+begin_src emacs-lisp
       (add-to-list 'load-path "/opt/ros/kinetic/share/emacs/site-lisp")
@@ -736,6 +764,11 @@
     #+begin_src emacs-lisp
       (use-package helm-descbinds)
       (helm-descbinds-mode)
+    #+end_src
+
+    Preferably open file in other window vertically
+    #+begin_src emacs-lisp
+      (setq helm-window-prefer-horizontal-split "decide")
     #+end_src
 **** Helm xref
      Show xref results in helm.
