@@ -1,4 +1,3 @@
-
 #+STARTUP: showeverything
 * Intro
   This is my master .org config file
@@ -524,6 +523,64 @@
       (mngkd/setup-ros-env)
     #+end_src
 
+    Add possibility to source workspaces
+    #+begin_src emacs-lisp
+      (defun mngkd/get-pkgs-in-build-space (build-space)
+	"Get all pkgs in the BUILD-SPACE. Returns a list of absolute file paths."
+	(let ((files (directory-files build-space t))
+	      (dirs-to-ignore '("." ".." "catkin_tools_prebuild"))
+	      pkgs)
+	  (dolist (f files pkgs)
+	    (when (file-directory-p f)
+	      (unless (member (file-name-nondirectory f) dirs-to-ignore)
+		(setq pkgs (cons f pkgs)))))))
+
+      (defun mngkd/concat-paths (paths)
+	"Concatenate file paths given by PATHS. Behaves like os.path.join()"
+	(let (res)
+	  (dolist (path (reverse paths) res)
+	    (if (symbolp path)
+		(setq res (concat (file-name-as-directory (symbol-value path)) res))		  
+	      (setq res (concat (file-name-as-directory path) res))))))
+
+      (defun mngkd/get-pkg-path (pkg-dir)
+	"Extract package path environment variable from the given PKG-DIR."
+	(let ((re-pattern "^export ROS_PACKAGE_PATH=\"\\([[:ascii:]]+\\):")
+	       (file (concat (file-name-as-directory (concat (file-name-as-directory pkg-dir) "catkin_generated")) "setup_cached.sh")))
+	  (with-temp-buffer
+	    (insert-file-contents file)
+	    (goto-char (point-min))
+	    (re-search-forward re-pattern)
+	    (match-string-no-properties 1)
+	    )))
+
+      (defun mngkd/get-pkg-paths-in-build-space (build-space)
+	"Get the pkg paths in the BUILD-SPACE as string."
+	(let (pkg-paths)
+	  (dolist (pkg (mngkd/get-pkgs-in-build-space build-space) pkg-paths)
+	    (if (not pkg-paths)
+		(setq pkg-paths (mngkd/get-pkg-path pkg))
+	      (setq pkg-paths (concat (mngkd/get-pkg-path pkg) ":" pkg-paths))))))
+
+      (defun mngkd/source-ros-ws (ws-path)
+	"Sources the ROS workspace WS-PATH by setting the necessary environment variables."
+	(let* ((build-space (let ((default-directory ws-path))
+			      (shell-command-to-string "printf %s \"$(catkin locate -b)\"")))
+
+	       (devel-space (mngkd/concat-paths '(ws-path "devel")))
+	       (lib-space (mngkd/concat-paths '(devel-space "lib"))))
+	  (mngkd/append-env-var "LD_LIBRARY_PATH" devel-space)
+	  (mngkd/append-env-var "ROSLISP_PACKAGE_DIRECTORIES" (mngkd/concat-paths '(ws-path "devel" "share" "common-lisp")))
+	  (mngkd/append-env-var "PYTHONPATH" (mngkd/concat-paths '(lib-space "python2.7" "dist-packages")))
+	  (mngkd/append-env-var "PKG_CONFIG_PATH" (mngkd/concat-paths '(lib-space "pkgconfig")))
+	  (mngkd/append-env-var "CMAKE_PREFIX_PATH" devel-space)
+	  (mngkd/append-env-var "ROS_PACKAGE_PATH" (mngkd/get-pkg-paths-in-build-space build-space))
+	  t))
+    #+end_src
+    Actually source a ROS workspace
+    #+begin_src emacs-lisp
+      (mngkd/source-ros-ws (expand-file-name "~/ros_ws/test_ws"))
+    #+end_src
     Include rosemacs package 
     #+begin_src emacs-lisp
       (add-to-list 'load-path "/opt/ros/kinetic/share/emacs/site-lisp")
